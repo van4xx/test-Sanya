@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
 }
 
 .App-logo {
@@ -14,14 +19,69 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 20px;
+  flex: 1;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--tg-theme-text-color, #000000);
+}
+
+p {
+  margin: 10px 0;
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.input-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px 0;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--tg-theme-hint-color, #999999);
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.info-container {
+  background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Telegram themes support */
+:root.dark {
+  --tg-theme-bg-color: #212121;
+  --tg-theme-text-color: #ffffff;
+  --tg-theme-hint-color: #aaaaaa;
+  --tg-theme-link-color: #8774e1;
+  --tg-theme-button-color: #8774e1;
+  --tg-theme-button-text-color: #ffffff;
+  --tg-theme-secondary-bg-color: #0f0f0f;
+}
+
+:root.light {
+  --tg-theme-bg-color: #ffffff;
+  --tg-theme-text-color: #222222;
+  --tg-theme-hint-color: #999999;
+  --tg-theme-link-color: #2481cc;
+  --tg-theme-button-color: #2481cc;
+  --tg-theme-button-text-color: #ffffff;
+  --tg-theme-secondary-bg-color: #f5f5f5;
 }
 
 .App-link {
