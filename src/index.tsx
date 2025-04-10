@@ -1,18 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { SDKProvider } from '@telegram-apps/sdk-react';
+import { init } from '@telegram-apps/sdk';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+// Initialize the Telegram Mini App SDK
+init();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <SDKProvider>
-      <App />
-    </SDKProvider>
+    <App />
   </React.StrictMode>
 );
 

@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useSDK } from '@telegram-apps/sdk-react';
+import {
+  on,
+  off,
+  mainButton,
+  backButton,
+  invokeCustomMethod,
+  themeParams
+} from '@telegram-apps/sdk';
 import './App.css';
 import axios from 'axios';
 
 function App() {
-  const sdk = useSDK();
   const [message, setMessage] = useState<string>('');
   const [serverStatus, setServerStatus] = useState<string>('Checking...');
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   useEffect(() => {
+    // Check if running in Telegram
+    // @ts-ignore - Telegram is added by the Telegram WebApp
+    setIsInitialized(!!window.Telegram?.WebApp);
+
     // Check server connection
     const checkServer = async () => {
       try {
@@ -25,34 +36,57 @@ function App() {
 
     checkServer();
 
-    // Set up Telegram back button if in Telegram
-    if (sdk) {
-      sdk.enableBackButton();
-      sdk.onBackButtonClick(() => {
-        sdk.showAlert('Closing Mini App');
-        sdk.close();
-      });
+    // Set up Telegram back button
+    backButton.enable();
+    
+    const handleBackButton = () => {
+      invokeCustomMethod('showAlert', { message: 'Closing Mini App' });
+      invokeCustomMethod('close');
+    };
+    
+    // Use the proper event name from the SDK
+    on('backButtonClicked', handleBackButton);
 
-      // Set Telegram theme
-      sdk.onPlatformThemeChange(({ theme }) => {
-        document.documentElement.className = theme;
-      });
-    }
-  }, [sdk]);
+    // Set color scheme based on Telegram theme
+    const updateTheme = () => {
+      document.documentElement.className = themeParams.colorScheme || 'light';
+    };
+    
+    // Set initial theme
+    updateTheme();
+    
+    // Listen for theme changes
+    const handleThemeChange = () => {
+      updateTheme();
+    };
+    
+    on('themeChanged', handleThemeChange);
+
+    return () => {
+      off('backButtonClicked', handleBackButton);
+      off('themeChanged', handleThemeChange);
+    };
+  }, []);
 
   const handleMainButton = () => {
-    if (sdk) {
-      sdk.showMainButton();
-      sdk.setMainButtonText('Submit');
-      sdk.onMainButtonClick(() => {
-        if (message.trim()) {
-          sdk.showAlert(`You submitted: ${message}`);
-          setMessage('');
-        } else {
-          sdk.showAlert('Please enter a message first');
-        }
-      });
-    }
+    mainButton.show();
+    mainButton.setText('Submit');
+    
+    const handleMainButtonClick = () => {
+      if (message.trim()) {
+        invokeCustomMethod('showAlert', { message: `You submitted: ${message}` });
+        setMessage('');
+      } else {
+        invokeCustomMethod('showAlert', { message: 'Please enter a message first' });
+      }
+    };
+    
+    // Use the proper event name from the SDK
+    on('mainButtonClicked', handleMainButtonClick);
+    
+    return () => {
+      off('mainButtonClicked', handleMainButtonClick);
+    };
   };
 
   return (
@@ -75,7 +109,7 @@ function App() {
           <p>
             This is a Telegram Mini App demo. You can interact with Telegram's native UI elements.
           </p>
-          {sdk ? (
+          {isInitialized ? (
             <p>TMA SDK initialized successfully!</p>
           ) : (
             <p>Not running inside Telegram or TMA SDK not initialized.</p>
